@@ -1,0 +1,26 @@
+# Arquivo: psono-migrate-job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: psono-migrate
+  namespace: psono  # Importante: mesmo namespace
+spec:
+  template:
+    spec:
+      containers:
+      - name: psono-migrate
+        image: psono/psono-combo-enterprise:latest
+
+        # Comando que prepara o banco de dados
+        command: ["python3", "./psono/manage.py", "migrate"]
+
+        # Puxa as senhas e hosts do Secret e ConfigMap
+        envFrom:
+        - configMapRef:
+            name: psono-configmap
+        - secretRef:
+            name: psono-secret
+
+      # "Never" = Não tente rodar de novo se o pod terminar
+      restartPolicy: Never 
+  backoffLimit: 4 # Tenta rodar 4 vezes se falhar (ex: rede)

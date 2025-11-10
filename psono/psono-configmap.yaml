@@ -1,0 +1,41 @@
+# Arquivo: psono-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: psono-configmap
+  namespace: psono
+data:
+  # --- Configuração do Frontend (Cliente) ---
+  # (Cole o conteúdo do seu /opt/docker/psono-client/config.json aqui)
+  config.json: |
+    {
+      "backend_servers": [
+        {
+          "title": "Psono (Intranet)",
+          "url": "https://psono.edgesearch.corp",
+          "domain": "psono.edgesearch.corp",
+          "priority": 0,
+          "default": true
+        }
+      ],
+      "authentication_methods": [
+        "AUTHKEY",
+        "SAML",
+        "OIDC"
+      ]
+    }
+    # (Lembre-se de ajustar a URL acima para o seu domínio interno real)
+
+  # --- Configuração Não Sensível do Servidor (Backend) ---
+  # Estes valores serão injetados como variáveis de ambiente
+  # e sobrescreverão o settings.yaml padrão da imagem.
+
+  # --- Banco de Dados ---
+  # (Use os valores do seu Azure PostgreSQL do Passo 1)
+  POSTGRES_HOST: "edge-psql-psono-eus2-prod-001.postgres.database.azure.com"
+  POSTGRES_DB: "postgres"
+  POSTGRES_USER: "psono_user" 
+
+  # --- Rede ---
+  # (Use seu domínio interno que será configurado no Passo 6)
+  ALLOWED_HOSTS: "psono.edgesearch.corp"
